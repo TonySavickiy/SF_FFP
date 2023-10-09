@@ -31,7 +31,7 @@ class BoardUsedException(GameException):
       
 class OutBoardException(GameException):
     def __str__(self):
-        return f'неправильные координаты'
+        return f'Координаты неверны'
 
 class OutOfAreaException(GameException):
     pass
