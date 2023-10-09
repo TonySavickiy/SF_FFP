@@ -1,3 +1,12 @@
+"""
+    Игра "Морской бой".
+    Играет пользователь против компьютера.
+    Пользователь вводит координаты для осуществления выстрела, компьютер генерирует выстрелы случайным образом.
+    Точками отображаются координаты, недоступные для выстрела(повторные выстрелы\зона вокруг подбитого корабля).
+    Победитель - тот, кто подобьёт все корабли противника.
+    На доске расположены: 1 корабль мощностью 3 клетки, 2 корабля мощностью 2 клетки и 4 корабля мощностью 1 клетка.
+    
+"""
 from random import randint
 
 #Класс для описания координат
@@ -122,6 +131,7 @@ class BattleZone:
         print("Мимо!")
         return False
 
+# Добавление индикаторов вокруг уже подбитых кораблей
     def zone_around_ship(self, array, verb=False):
         around = [(-1, -1), (-1, 0), (-1, 1),
                   (0, -1), (0, 0), (0, 1),
@@ -134,7 +144,7 @@ class BattleZone:
                         self.tild[current.x][current.y] = '◦'
                     self.zanyato.append(current)
 
-
+# Родительский класс для описания логики ходов в игре
 class Turn:
     def __init__(self, board, enem):
         self.b = board
@@ -152,11 +162,11 @@ class Turn:
             except GameException as e:
                 print(e)
 
-
+# Описание процесса хода пользователя
 class USER(Turn):
     def ask(self):
         while True:
-            cords = input("Ваш ход: ").split()
+            cords = input("Ваш ход, введите координаты: ").split()
 
             if len(cords) != 2:
                 print(" Введите координаты(сначала Y, затем X через пробел) ")
@@ -172,14 +182,14 @@ class USER(Turn):
 
             return Dot(x - 1, y - 1)
 
-
+# Ход компьютера
 class AI(Turn):
     def ask(self):
         d = Dot(randint(0, 5), randint(0, 5))
         print(f"Ход компьютера: {d.x + 1} {d.y + 1}")
         return d
 
-
+# Описание основной логики игры
 class Game:
     def __init__(self):
         player = self.try_make_board()
@@ -188,12 +198,14 @@ class Game:
         self.AI = AI(comp, player)
         self.user = USER(player, comp)
 
+# Создание игровой доски с кораблями
     def try_make_board(self):
         board = None
         while board is None:
             board = self.random_ships()
         return board
-
+    
+# Распределение кораблей
     def random_ships(self):
         battle_area = BattleZone()
         count_ships = [3, 2, 2, 1, 1, 1, 1]
@@ -214,7 +226,8 @@ class Game:
                     pass
         battle_area.clear()
         return battle_area
-
+    
+#Приветственный блок
     def greet(self):
         print('-' * 20)
         print('Добро пожаловать!')
@@ -225,6 +238,7 @@ class Game:
         print('   X - Строка')
         print('   Y - Столбец')
 
+#Блок хода игры
     def loop(self):
         num = 0
         while True:
